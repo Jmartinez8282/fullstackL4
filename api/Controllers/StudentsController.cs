@@ -49,6 +49,75 @@ public class StudentsController : ControllerBase
         return BadRequest();
     }
 
+//Delete delete
 
-   
+    [HttpDelete("{id:int}")]
+
+    public async Task<IActionResult> Delete(int id)
+    {
+      var student = await _context.Students.FindAsync(id);
+        if(student == null)
+        {
+            return NotFound();
+        }
+
+        _context.Remove(student);
+
+        var result = await _context.SaveChangesAsync();
+
+        if(result > 0)
+        {
+            return Ok("Student was deleted");
+        }
+        
+        return BadRequest("Unable to delete student");
+
+        
+
+
+
+
+    }
+
+    //GEt a singe student {id}
+
+    [HttpGet("{id:int}")]
+
+    public async Task<ActionResult<Student>> GetStudent(int id)
+    {
+        var student = await _context.Students.FindAsync(id);
+        if(student == null)
+        {
+            return NotFound("Sorry student not found");
+        }
+        return Ok(student);
+    }
+
+
+///Update PUT
+
+    [HttpPut("{id:int}")]
+
+    public async Task<IActionResult> EditStudent(int id, Student student)
+    {
+        var studentFromDb = await _context.Students.FindAsync(id);
+
+        if(studentFromDb == null)
+        {
+            return BadRequest("Student not found");
+        }
+       studentFromDb.Name = student.Name;
+       studentFromDb.Email = student.Email;
+       studentFromDb.Address = student.Address;
+       studentFromDb.PhoneNumber = student.PhoneNumber;
+
+       var result = await _context.SaveChangesAsync();
+
+       if(result > 0)
+       {
+        return Ok("Student was edited");
+       }
+       return BadRequest("Unable to update data");
+    }
+
 }
